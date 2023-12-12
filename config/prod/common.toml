@@ -1,0 +1,13 @@
+[common-etcd]
+host = "127.0.0.1:2379"
+basePath = "/gochat_srv"
+serverPathLogic = "LogicRpcServer" # logic 层的 rpc 服务注册名称
+serverPathConnect = "ConnectPushRpcServer" #
+userName = ""
+password = ""
+connectionTimeout = 5
+
+[common-redis]
+redisAddress = "127.0.0.1:6379"
+redisPassword = ""
+db = 0
