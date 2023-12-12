@@ -8,7 +8,7 @@ import (
 )
 
 func (c *Connect) InitWebsocket() error {
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) { // TODO: 怎么使用 goland 做接口测试
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		c.serveWs(DefaultServer, w, r)
 	}) // ✅
 	err := http.ListenAndServe(config.Conf.Connect.ConnectWebsocket.Bind, nil)
@@ -31,11 +31,10 @@ func (c *Connect) serveWs(server *Server, w http.ResponseWriter, r *http.Request
 	var ch *Channel
 	//default broadcast size eq 512
 	ch = NewChannel(server.Options.BroadcastSize)
-	ch.conn = conn // TODO: 维持 ws 连接
+	ch.conn = conn
 	// 每有一个连接进来，都会给这个连接开启独立的读消息 goroutine 和写消息 goroutine
-	// TODO: 从哪里开始验证 authToken
 	//send data to websocket conn
-	go server.writePump(ch, c) // TODO: 发送消息，开了独立的 goroutine
+	go server.writePump(ch, c)
 	//get data from websocket conn
-	go server.readPump(ch, c) // TODO: 读消息，开了独立的 goroutine
+	go server.readPump(ch, c)
 }

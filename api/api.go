@@ -33,21 +33,20 @@ func (api *Api) Run() {
 	apiConfig := config.Conf.Api
 	port := apiConfig.ApiBase.ListenPort // 端口 7070
 	fmt.Println("api层端口：", port)
-	//flag.Parse()                         // TODO: 这里是在干嘛
+	//flag.Parse()
 
 	// 开启 http 服务
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
 		Handler: r, // TODO: 这里使用了 r
 	}
-	go func() { // TODO: 这里启了一个新的 goroutine
-		// TODO: 为什么不用 gin 的 r.Run，是否是为了兼容 tcp 连接
+	go func() { // 启一个新的 goroutine
+		// TODO: 不用 gin 的 r.Run，后期可以兼容 tcp 连接
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed { // 启动监听，
 			logrus.Errorf("start listen : %s\n", err)
 		}
 	}()
 
-	// TODO: 优雅关闭服务
 	quit := make(chan os.Signal)
 	// TODO: go 中的信号处理：
 	// SIGUP: 终端控制进程结束
@@ -56,7 +55,6 @@ func (api *Api) Run() {
 	// SIGQUIT: 用户发送 QUIT 字符 (Ctrl+/) 触发
 	signal.Notify(quit, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	s := <-quit // TODO: 从这里开始 Run() 方法的执行会被阻塞，直到有信号进入 quit 通道
-	// TODO: 要知道这些信号量是怎么被读到的
 	logrus.Infof("Exit signal:", s)
 
 	logrus.Infof("Shut down server ...")
@@ -67,5 +65,4 @@ func (api *Api) Run() {
 	}
 	logrus.Infof("Server exiting")
 	os.Exit(0) // TODO: 退出的是进程
-	// TODO: 这里好麻烦，为什么不用 gin 的优雅关停
 }

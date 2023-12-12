@@ -7,7 +7,7 @@ type Operator interface {
 	DisConnect(disConn *proto.DisConnectRequest) (err error)
 }
 
-type DefaultOperator struct { // TODO: 要对这个注册服务吗
+type DefaultOperator struct {
 }
 
 // rpc call logic layer

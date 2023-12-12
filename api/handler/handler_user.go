@@ -19,7 +19,7 @@ func Login(c *gin.Context) {
 		Name:     formLogin.UserName,
 		Password: utils.Sha1(formLogin.Password), // 密码要哈希处理
 	}
-	// TODO: RpcLogicObj 是 rpc 请求代理对象？本服务中发出的所有 rpc 请求都交给这个对象处理
+	// TODO: RpcLogicObj 类似于 rpc 请求代理对象，本服务中发出的所有 rpc 请求都交给这个对象处理
 	code, authToken, msg := rpc.RpcLogicObj.Login(req) // TODO: 向下一层发送 rpc 请求，调用 Login
 	if code == utils.CodeFail || authToken == "" {     // 失败
 		utils.FailWithMsg(c, msg)
@@ -31,7 +31,6 @@ func Login(c *gin.Context) {
 
 func Register(c *gin.Context) {
 	var formRegister dto.FormRegister
-	// TODO; 请求是form表单还是 json 字符串
 	if err := c.ShouldBindBodyWith(&formRegister, binding.JSON); err != nil {
 		utils.FailWithMsg(c, err.Error())
 		return

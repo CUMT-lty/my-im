@@ -12,7 +12,7 @@ var once sync.Once
 
 // var realPath string
 
-var Conf *Config // TODO: 全局唯一配置对象，只被实例化一次
+var Conf *Config // 全局唯一配置对象，只被实例化一次
 
 const (
 	SuccessReplyCode      = 0
@@ -23,7 +23,7 @@ const (
 	RedisPrefix           = "gochat_"
 	RedisRoomPrefix       = "gochat_room_"
 	RedisRoomOnlinePrefix = "gochat_room_online_count_"
-	MsgVersion            = 1 // TODO: 这个是干嘛的
+	MsgVersion            = 1
 	OpSingleSend          = 2 // single user
 	OpRoomSend            = 3 // send to room
 	OpRoomCountSend       = 4 // get online user count
@@ -65,7 +65,6 @@ func GetMode() string {
 	return env
 }
 
-// TODO: gin 模式
 func GetGinRunMode() string {
 	env := GetMode()
 	//gin have debug,test,release mode
@@ -81,9 +80,8 @@ func GetGinRunMode() string {
 	return "release"
 }
 
-// TODO: redis 相关配置
 type CommonRedis struct {
-	RedisAddress  string `mapstructure:"redisAddress"` // // TODO: mapstructure用于将通用的 map[string]interface{} 解码到对应的 Go 结构体中，或者执行相反的操作。
+	RedisAddress  string `mapstructure:"redisAddress"` // TODO: mapstructure用于将通用的 map[string]interface{} 解码到对应的 Go 结构体中，或者执行相反的操作。
 	RedisPassword string `mapstructure:"redisPassword"`
 	Db            int    `mapstructure:"db"`
 }
@@ -159,12 +157,10 @@ type TaskConfig struct {
 	TaskBase TaskBase `mapstructure:"task-base"`
 }
 
-// api 层配置
 type ApiBase struct {
 	ListenPort int `mapstructure:"listenPort"`
 }
 
-// api 层配置
 type ApiConfig struct {
 	ApiBase ApiBase `mapstructure:"api-base"`
 }
@@ -184,7 +180,6 @@ func getCurrentDir() string {
 	return dir
 }
 
-// TODO: init 函数在导包时自动执行
 func init() {
 	Init()
 }

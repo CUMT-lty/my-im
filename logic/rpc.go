@@ -14,9 +14,7 @@ import (
 	"time"
 )
 
-// TODO: 提供对上层的 rpc 服务
-
-type LogicRpcServer struct{} // TODO: 这个类型的名字就是服务的名字
+type LogicRpcServer struct{}
 
 // rpc_user
 func (rpc *LogicRpcServer) Register(ctx context.Context, args *proto.RegisterRequest, reply *proto.RegisterReply) (err error) {
@@ -84,11 +82,11 @@ func (rpc *LogicRpcServer) Login(ctx context.Context, args *proto.LoginRequest, 
 			return errors.New("logout user fail!token is:" + token)
 		}
 	}
-	RedisSessClient.Do(ctx, "MULTI")                                       // 开启事务
-	RedisSessClient.HMSet(ctx, sessionId, userData)                        // 加入新 session
-	RedisSessClient.Expire(ctx, sessionId, 86400*time.Second)              // 设置过期时间为一天
-	RedisSessClient.Set(ctx, loginSessionId, randToken, 86400*time.Second) // TODO: 没明白
-	err = RedisSessClient.Do(ctx, "EXEC").Err()                            // 执行事务
+	RedisSessClient.Do(ctx, "MULTI")                          // 开启事务
+	RedisSessClient.HMSet(ctx, sessionId, userData)           // 加入新 session
+	RedisSessClient.Expire(ctx, sessionId, 86400*time.Second) // 设置过期时间为一天
+	RedisSessClient.Set(ctx, loginSessionId, randToken, 86400*time.Second)
+	err = RedisSessClient.Do(ctx, "EXEC").Err() // 执行事务
 	//err = RedisSessClient.Set(authToken, data.Id, 86400*time.Second).Err()
 	if err != nil {
 		logrus.Infof("register set redis token fail!")
@@ -155,7 +153,6 @@ func (rpc *LogicRpcServer) Logout(ctx context.Context, args *proto.LogoutRequest
 		logrus.Infof("logout del sess map error:%s", err.Error())
 		return err
 	}
-	// TODO: 没明白这里 serverId 是干嘛的，为什么要删除
 	logic := new(Logic)
 	serverIdKey := logic.getUserKey(fmt.Sprintf("%d", intUserId))
 	err = RedisSessClient.Del(ctx, serverIdKey).Err()
@@ -275,7 +272,6 @@ func (rpc *LogicRpcServer) GetRoomInfo(ctx context.Context, args *proto.Send, re
 
 // TODO: 连接管理
 
-// TODO： 连接，没看明白逻辑
 func (rpc *LogicRpcServer) Connect(ctx context.Context, args *proto.ConnectRequest, reply *proto.ConnectReply) (err error) {
 	if args == nil {
 		logrus.Errorf("logic --> connect args empty")
@@ -314,7 +310,6 @@ func (rpc *LogicRpcServer) Connect(ctx context.Context, args *proto.ConnectReque
 	return
 }
 
-// TODO: 断开连接, 没看明白逻辑
 func (rpc *LogicRpcServer) DisConnect(ctx context.Context, args *proto.DisConnectRequest, reply *proto.DisConnectReply) (err error) {
 	logic := new(Logic)
 	roomUserKey := logic.getRoomUserKey(strconv.Itoa(args.RoomId))

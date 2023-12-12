@@ -17,7 +17,7 @@ func ParseNetwork(str string) (network, addr string, err error) { // TODO: è¿™ç§
 	} else {
 		network = str[:idx]
 		addr = str[idx+1:]
-		fmt.Println("utils.network ==> ", "network=", network, "addr=", addr) // TODO: network
+		fmt.Println("utils.network ==> ", "network=", network, "addr=", addr)
 		return
 	}
 }

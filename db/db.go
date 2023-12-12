@@ -36,14 +36,13 @@ func initDB(dbName string) {
 	dbMap[dbName], e = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: newLogger,
 	})
-	// TODO: 这些在 mysql 中都对应什么
 	//dbMap[dbName].DB().SetMaxIdleConns(4)
 	//dbMap[dbName].DB().SetMaxOpenConns(20)
 	//dbMap[dbName].DB().SetConnMaxLifetime(8 * time.Second)
 	//if config.GetMode() == "dev" {
 	//	dbMap[dbName].LogMode(true)
 	//}
-	syncLock.Unlock() // TODO: 释放锁
+	syncLock.Unlock()
 	if e != nil {
 		logrus.Error("connect db fail:%s", e.Error())
 	}

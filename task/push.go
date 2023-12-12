@@ -56,7 +56,7 @@ func (task *Task) Push(msg string) {
 		}
 	case config.OpRoomSend: // 向房间发送消息
 		task.broadcastRoomToConnect(m.RoomId, m.Msg)
-	case config.OpRoomCountSend: // TODO: 获取房间数？
+	case config.OpRoomCountSend:
 		task.broadcastRoomCountToConnect(m.RoomId, m.Count)
 	case config.OpRoomInfoSend: // 获取房间相关信息
 		task.broadcastRoomInfoToConnect(m.RoomId, m.RoomUserInfo)

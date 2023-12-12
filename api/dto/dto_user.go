@@ -32,7 +32,7 @@ type FormLogout struct {
 	AuthToken string `form:"authToken" json:"authToken" binding:"required"`
 }
 
-// TODO: 登陆状态校验？
+// 登陆状态校验
 type FormCheckSessionId struct {
 	AuthToken string `form:"authToken" json:"authToken" binding:"required"`
 }

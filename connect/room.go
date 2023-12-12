@@ -18,8 +18,8 @@ type Room struct {
 	Id          int          // 房间 id
 	OnlineCount int          // 房间内的在线用户数量
 	rLock       sync.RWMutex // 互斥锁
-	drop        bool         // 房间是否存在 TODO: 已经弃用的房间怎么管理
-	next        *Channel     // TODO: 房间内的会话链表？
+	drop        bool         // 房间是否存在
+	next        *Channel     // TODO: 房间内的会话链表
 }
 
 func NewRoom(roomId int) *Room {
@@ -59,7 +59,7 @@ func (r *Room) Push(msg *proto.Msg) {
 			logrus.Infof("push msg to channel in room err:%s", err.Error())
 		}
 	}
-	r.rLock.RUnlock() // TODO: 这个方法和 Unlock 区别在哪？
+	r.rLock.RUnlock() // TODO: Unlock
 	return
 }
 
@@ -79,6 +79,6 @@ func (r *Room) DeleteChannel(ch *Channel) bool {
 	if r.OnlineCount <= 0 { // 如果房间内的在线用户数 <=0，丢弃该房间
 		r.drop = true
 	}
-	r.rLock.RUnlock() // TODO: 看一下这个释放锁方法
+	r.rLock.RUnlock()
 	return r.drop
 }

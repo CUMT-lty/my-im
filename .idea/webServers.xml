@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="b1fd566c-13e2-4ca3-9676-c70315052c3b" name="tencent-OpenCloudOS-8.6">
+        <fileTransfer accessType="SFTP" host="43.142.26.15" port="22" sshConfigId="4a436a4e-5606-46b0-914f-6d62b01a17d5" sshConfig="root@43.142.26.15:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

@@ -10,7 +10,7 @@ import (
 // redis 初始化相关
 
 var RedisClientMap = map[string]*redis.Client{}
-var syncLock sync.Mutex // TODO: 锁
+var syncLock sync.Mutex
 
 type RedisOption struct {
 	Address  string
@@ -23,10 +23,8 @@ func GetRedisInstance(redisOpt RedisOption) *redis.Client {
 	db := redisOpt.Db
 	password := redisOpt.Password
 	addr := fmt.Sprintf("%s", address)
-	syncLock.Lock() // TODO: 加锁
-	// TODO: 这里为什么要加锁？
+	syncLock.Lock()
 	// 防止并发请求来时，给一个 redis 服务地址创建多个连接
-	// TODO: 创建了多个连接的后果是什么？
 	if redisCli, ok := RedisClientMap[addr]; ok { // 一个 redis 服务地址使用一个 redis 连接
 		// 这里返回之前是否需要释放锁
 		return redisCli // 如果已有就直接返回
@@ -35,10 +33,10 @@ func GetRedisInstance(redisOpt RedisOption) *redis.Client {
 		Addr:            addr,
 		Password:        password,
 		DB:              db,
-		ConnMaxLifetime: 20 * time.Second, // TODO: 连接存活时长，从创建开始计时，超过指定时长则关闭连接
+		ConnMaxLifetime: 20 * time.Second,
 		//MaxConnAge: 20 * time.Second, 原来是这个，含义应该是一样的
 	})
 	RedisClientMap[addr] = newRedisCli
-	syncLock.Unlock() // TODO: 释放锁
+	syncLock.Unlock()
 	return RedisClientMap[addr]
 }

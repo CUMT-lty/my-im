@@ -10,18 +10,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// TODO: 和消息队列的交互
-
 var RedisClient *redis.Client
-var RedisSessClient *redis.Client // TODO: 管理 session 的链接
+var RedisSessClient *redis.Client
 
 // 发送 redis 消息到队列（这里队列用的是双向链表）
 func (logic *Logic) RedisPublishChannel(ctx context.Context, serverId string, toUserId int, msg []byte) (err error) {
 	redisMsg := proto.RedisMsg{
-		Op:       config.OpSingleSend, // TODO: 单点发送
-		ServerId: serverId,            // TODO: logic 层哪个节点发送的？看下这个 serverId 是干嘛的
-		UserId:   toUserId,            // TODO: 发给哪个用户的
-		Msg:      msg,                 // TODO: 消息
+		Op:       config.OpSingleSend,
+		ServerId: serverId,
+		UserId:   toUserId,
+		Msg:      msg,
 	}
 	redisMsgStr, err := json.Marshal(redisMsg)
 	if err != nil {
@@ -38,11 +36,11 @@ func (logic *Logic) RedisPublishChannel(ctx context.Context, serverId string, to
 
 func (logic *Logic) RedisPublishRoomInfo(ctx context.Context, roomId int, count int, RoomUserInfo map[string]string, msg []byte) (err error) {
 	var redisMsg = &proto.RedisMsg{
-		Op:           config.OpRoomSend, // TODO: 发送消息到指定房间
-		RoomId:       roomId,            // TODO: 房间编号
-		Count:        count,             // TODO: 这个是干嘛的
-		Msg:          msg,               // TODO: 消息本体
-		RoomUserInfo: RoomUserInfo,      // TODO: 是一个 map，应该是用来遍历房间成员的
+		Op:           config.OpRoomSend,
+		RoomId:       roomId,
+		Count:        count,
+		Msg:          msg,
+		RoomUserInfo: RoomUserInfo,
 	}
 	redisMsgByte, err := json.Marshal(redisMsg)
 	if err != nil {
@@ -60,15 +58,15 @@ func (logic *Logic) RedisPublishRoomInfo(ctx context.Context, roomId int, count 
 func (logic *Logic) RedisPushRoomCount(ctx context.Context, roomId int, count int) (err error) {
 	var redisMsg = &proto.RedisMsg{
 		Op:     config.OpRoomCountSend,
-		RoomId: roomId, // TODO: 房间 Id
-		Count:  count,  // TODO: 房间内的在线用户数量?
+		RoomId: roomId,
+		Count:  count,
 	}
 	redisMsgByte, err := json.Marshal(redisMsg)
 	if err != nil {
 		logrus.Errorf("logic,RedisPushRoomCount redisMsg error : %s", err.Error())
 		return
 	}
-	err = RedisClient.LPush(ctx, config.QueueName, redisMsgByte).Err() // TODO: 在线用户数也要放到队列中吗
+	err = RedisClient.LPush(ctx, config.QueueName, redisMsgByte).Err()
 	if err != nil {
 		logrus.Errorf("logic,RedisPushRoomCount redisMsg error : %s", err.Error())
 		return
@@ -76,7 +74,6 @@ func (logic *Logic) RedisPushRoomCount(ctx context.Context, roomId int, count in
 	return
 }
 
-// TODO: 不知道这个方法是用来干啥的
 func (logic *Logic) RedisPushRoomInfo(ctx context.Context, roomId int, count int, roomUserInfo map[string]string) (err error) {
 	var redisMsg = &proto.RedisMsg{
 		Op:           config.OpRoomInfoSend,
@@ -97,8 +94,6 @@ func (logic *Logic) RedisPushRoomInfo(ctx context.Context, roomId int, count int
 	return
 }
 
-// TODO: authKey 是哪来的
-// 加前缀
 func (logic *Logic) getRoomUserKey(authKey string) string {
 	var returnKey bytes.Buffer
 	returnKey.WriteString(config.RedisRoomPrefix)
@@ -106,8 +101,6 @@ func (logic *Logic) getRoomUserKey(authKey string) string {
 	return returnKey.String()
 }
 
-// TODO: authKey 是哪来的
-// 加前缀
 func (logic *Logic) getRoomOnlineCountKey(authKey string) string {
 	var returnKey bytes.Buffer
 	returnKey.WriteString(config.RedisRoomOnlinePrefix)
@@ -115,8 +108,6 @@ func (logic *Logic) getRoomOnlineCountKey(authKey string) string {
 	return returnKey.String()
 }
 
-// TODO: authKey 是哪来的
-// 加前缀
 func (logic *Logic) getUserKey(authKey string) string {
 	var returnKey bytes.Buffer
 	returnKey.WriteString(config.RedisPrefix)

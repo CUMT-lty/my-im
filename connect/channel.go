@@ -9,10 +9,10 @@ import (
 
 // 一个 Channel 表示一个用户会话连接
 type Channel struct {
-	Room      *Room    // TODO: 所属房间？
+	Room      *Room
 	Next      *Channel // 一个房间中的所有会话连接用双向链表组织
 	Prev      *Channel
-	broadcast chan *proto.Msg // TODO: 用来广播消息的通道？
+	broadcast chan *proto.Msg
 	userId    int             // 用户 id，标识是哪个用户的会话链接
 	conn      *websocket.Conn // websocket 连接
 	//connTcp   *net.TCPConn  // 不用 tcp 连接

@@ -20,11 +20,11 @@ func (logic *Logic) InitPublishRedisClient() (err error) {
 		Db:       config.Conf.Common.CommonRedis.Db,
 	}
 	RedisClient = utils.GetRedisInstance(redisOpt)
-	if pong, err := RedisClient.Ping(context.Background()).Result(); err != nil { // TODO: ping 中的参数要怎么传
+	if pong, err := RedisClient.Ping(context.Background()).Result(); err != nil {
 		logrus.Infof("RedisCli Ping Result pong: %s,  err: %s", pong, err)
 	}
 	// this can change use another redis save session data
-	RedisSessClient = RedisClient // TODO: 管理 session 也用这个连接
+	RedisSessClient = RedisClient
 	return err
 }
 
@@ -36,18 +36,19 @@ func (logic *Logic) InitRpcServer() (err error) {
 			logrus.Panicf("InitLogicRpc ParseNetwork error : %s", err.Error())
 		}
 		logrus.Infof("logic start run at-->%s:%s", network, addr)
-		go logic.createRpcServer(network, addr) // TODO: 启了一个新 goroutine，内部注册并启动一个 logic 层服务结点
+		go logic.createRpcServer(network, addr)
 	}
 	return
 }
 
 func (logic *Logic) createRpcServer(network string, addr string) {
-	s := server.NewServer() // TODO: 配置文件中每有一个结点就创建一个新的 server
+	s := server.NewServer()
 	// 添加 etcd 插件
-	logic.addRegistryPlugin(s, network, addr) // TODO: 任何插件都必须在注册服务之前添加到 server 中
+	logic.addRegistryPlugin(s, network, addr)
 	// serverId must be unique
 	//err := s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathLogic, new(RpcLogic), fmt.Sprintf("%s", config.Conf.Logic.LogicBase.ServerId))
-	// 注册 rpc 服务，TODO: 最后一个 metadata 参数应该是用来标识该服务结点是哪一个服务器的
+	// 注册 rpc 服务
+	// metadata 参数标识该服务结点
 	err := s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathLogic, new(LogicRpcServer), fmt.Sprintf("%s", logic.ServerId))
 	if err != nil {
 		logrus.Errorf("register error:%s", err.Error())
@@ -61,7 +62,7 @@ func (logic *Logic) createRpcServer(network string, addr string) {
 func (logic *Logic) addRegistryPlugin(s *server.Server, network string, addr string) {
 	r := &serverplugin.EtcdV3RegisterPlugin{
 		ServiceAddress: network + "@" + addr,                         // 对外暴露的本机监听地址
-		EtcdServers:    []string{config.Conf.Common.CommonEtcd.Host}, // TODO: etcd 集群地址
+		EtcdServers:    []string{config.Conf.Common.CommonEtcd.Host}, // etcd
 		BasePath:       config.Conf.Common.CommonEtcd.BasePath,       // 服务前缀，为当前服务设置命名空间
 		Metrics:        metrics.NewRegistry(),                        // 用来更新服务的tps
 		UpdateInterval: time.Minute,                                  // 服务的刷新间隔

@@ -13,7 +13,6 @@ import (
 )
 
 func main() {
-	// TODO：gin 的环境配置为生产环境？
 	var module string
 	flag.StringVar(&module, "module", "", "assign run module")
 	flag.Parse()

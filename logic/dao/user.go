@@ -13,7 +13,7 @@ type User struct {
 	UserName   string
 	Password   string
 	CreateTime time.Time
-	//db.DbGoChat // TODO: 这个是啥
+	//db.DbGoChat
 }
 
 // 创建 user 表

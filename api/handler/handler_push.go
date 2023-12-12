@@ -34,7 +34,7 @@ func Push(c *gin.Context) {
 		utils.FailWithMsg(c, "rpc fail get self info")
 		return
 	}
-	// TODO: 这个业务逻辑是什么，是只能私发给同一房间内的人吗
+
 	roomId := formPush.RoomId
 	req := &proto.Send{
 		Msg:          msg,
@@ -94,7 +94,7 @@ func Count(c *gin.Context) {
 	roomId := formCount.RoomId
 	req := &proto.Send{
 		RoomId: roomId,
-		Op:     config.OpRoomCountSend, // TODO: 获取房间人数？
+		Op:     config.OpRoomCountSend,
 	}
 	code, msg := rpc.RpcLogicObj.Count(req) // 向下一层发起 rpc 调用
 	if code == utils.CodeFail {
@@ -114,7 +114,7 @@ func GetRoomInfo(c *gin.Context) {
 	roomId := formRoomInfo.RoomId
 	req := &proto.Send{
 		RoomId: roomId,
-		Op:     config.OpRoomInfoSend, // TODO: 这个业务逻辑是干嘛的，没懂
+		Op:     config.OpRoomInfoSend,
 	}
 	code, msg := rpc.RpcLogicObj.GetRoomInfo(req) // 向下一层发起 rpc 调用
 	if code == utils.CodeFail {

@@ -21,14 +21,14 @@ var RClient = &RpcConnectClient{ // TODO：每个 task 层结点维护一个自�
 	IndexMap:     make(map[string]int),
 }
 
-type RpcConnectClient struct { // TODO: 这个没看明白是什么
+type RpcConnectClient struct {
 	lock         sync.Mutex
 	ServerInsMap map[string][]Instance //serverId--[]ins
-	IndexMap     map[string]int        //serverId--index TODO: 这个字段到底是用来干嘛的
+	IndexMap     map[string]int        //serverId--index
 }
 
 type Instance struct {
-	ServerType string         // TODO: 服务器类型，不知道具体是什么
+	ServerType string
 	ServerId   string         // TODO: connect 层服务器的唯一 Id
 	Client     client.XClient // TODO: 连接 connect 层该服务器的 rpc 客户端
 }
@@ -67,12 +67,12 @@ func (task *Task) InitConnectRpcClient() (err error) {
 		if serverType == "" || serverId == "" {
 			continue
 		}
-		p2pDisc, e := client.NewPeer2PeerDiscovery(connectConf.Key, "") // TODO: 对 etcd 发现的每个服务都创建一个点对点服务发现对象
+		p2pDisc, e := client.NewPeer2PeerDiscovery(connectConf.Key, "")
 		if e != nil {
 			logrus.Errorf("init task client.NewPeer2PeerDiscovery client fail:%s", e.Error())
 			continue
 		}
-		c := client.NewXClient(etcdConfig.ServerPathConnect, client.Failtry, client.RandomSelect, p2pDisc, client.DefaultOption) // TODO：对 etcd 发现的每个服务都创建一个客户端
+		c := client.NewXClient(etcdConfig.ServerPathConnect, client.Failtry, client.RandomSelect, p2pDisc, client.DefaultOption)
 		ins := Instance{
 			ServerType: serverType,
 			ServerId:   serverId,
@@ -85,7 +85,7 @@ func (task *Task) InitConnectRpcClient() (err error) {
 		}
 	}
 	// watch connect server change && update RpcConnectClientList
-	go task.watchServicesChange(etcdDisc) // TODO: 始终监听 etcd 发现新的服务
+	go task.watchServicesChange(etcdDisc)
 	return
 }
 
@@ -95,13 +95,11 @@ func (task *Task) InitConnectRpcClient() (err error) {
 TODO: 在多个连接层服务器提供相同服务的情况下，通过轮询选择一个 RPC 客户端，实现了负载均衡的效果。
 */
 func (rc *RpcConnectClient) GetRpcClientByServerId(serverId string) (c client.XClient, err error) {
-	rc.lock.Lock()                                                                        // TODO: 加锁
-	defer rc.lock.Unlock()                                                                // TODO: 等方法执行完要退出的时候再释放锁，相当于锁住整个方法
+	rc.lock.Lock()
+	defer rc.lock.Unlock()
 	if _, has := rc.ServerInsMap[serverId]; !has || len(rc.ServerInsMap[serverId]) <= 0 { // 如果连接层没有这个 ip
 		return nil, errors.New("no connect layer ip:" + serverId)
 	}
-	// TODO: 自己实现负载均衡？
-	// TODO: 那这个工作 etcd 不能做吗
 	if _, has := rc.IndexMap[serverId]; !has {
 		rc.IndexMap = map[string]int{
 			serverId: 0,
@@ -129,7 +127,7 @@ func (rc *RpcConnectClient) GetAllConnectTypeRpcClient() (rpcClientList []client
 // etcd 监控 connect 层的服务结点变化
 func (task *Task) watchServicesChange(d client.ServiceDiscovery) {
 	etcdConfig := config.Conf.Common.CommonEtcd
-	for kvChan := range d.WatchService() { // TODO: 之类是循环读一个通道，会阻塞
+	for kvChan := range d.WatchService() {
 		if len(kvChan) <= 0 {
 			logrus.Errorf("connect services change, connect alarm, no abailable ip")
 		}
@@ -160,9 +158,9 @@ func (task *Task) watchServicesChange(d client.ServiceDiscovery) {
 				insMapNew[serverId] = append(insMapNew[serverId], ins)
 			}
 		}
-		RClient.lock.Lock() // TODO: 加锁
+		RClient.lock.Lock()
 		RClient.ServerInsMap = insMapNew
-		RClient.lock.Unlock() // TODO: 释放锁
+		RClient.lock.Unlock()
 	}
 }
 
@@ -184,16 +182,16 @@ func getParamByKey(s string, key string) string {
 func (task *Task) pushSingleToConnect(serverId string, userId int, msg []byte) {
 	logrus.Infof("pushSingleToConnect Body %s", string(msg))
 	pushMsgReq := &proto.PushMsgRequest{
-		UserId: userId, // TODO: 消息接收方 id 发送方是怎么获得的
+		UserId: userId,
 		Msg: proto.Msg{
 			Ver:       config.MsgVersion,
-			Operation: config.OpSingleSend,    // 操作类型：单点发送消息
-			SeqId:     utils.GetSnowflakeId(), // TODO: 生成消息的唯一序列号? 为什么，这个序列号有什么用
-			Body:      msg,                    // 消息体
+			Operation: config.OpSingleSend, // 操作类型：单点发送消息
+			SeqId:     utils.GetSnowflakeId(),
+			Body:      msg, // 消息体
 		},
 	}
 	reply := &proto.SuccessReply{}
-	connectRpc, err := RClient.GetRpcClientByServerId(serverId) // 获取一个 rpc 客户端 TODO: 从这里开始报错
+	connectRpc, err := RClient.GetRpcClientByServerId(serverId)
 	if err != nil {
 		logrus.Infof("get rpc client err : %v", err)
 	}
@@ -207,7 +205,7 @@ func (task *Task) pushSingleToConnect(serverId string, userId int, msg []byte) {
 // 广播消息到房间
 func (task *Task) broadcastRoomToConnect(roomId int, msg []byte) {
 	pushRoomMsgReq := &proto.PushRoomMsgRequest{
-		RoomId: roomId, // TODO: 目标 roomId 就是发送方加入的房间的 roomId？
+		RoomId: roomId,
 		Msg: proto.Msg{
 			Ver:       config.MsgVersion,
 			Operation: config.OpRoomSend, // 操作类型：广播消息到房间
@@ -224,7 +222,6 @@ func (task *Task) broadcastRoomToConnect(roomId int, msg []byte) {
 	}
 }
 
-// TODO: 向 connect 层广播房间数？房间数在哪获取
 func (task *Task) broadcastRoomCountToConnect(roomId, count int) {
 	msg := &proto.RedisRoomCountMsg{
 		Count: count,

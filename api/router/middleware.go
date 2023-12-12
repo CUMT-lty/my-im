@@ -34,7 +34,7 @@ func CheckSessionId() gin.HandlerFunc {
 	}
 }
 
-// TODO: 这个中间件是用来干嘛的？
+// TODO: 中间件
 func CorsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method

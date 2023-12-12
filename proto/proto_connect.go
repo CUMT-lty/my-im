@@ -1,6 +1,5 @@
 package proto
 
-// 消息体 TODO: 各个字段的含义
 type Msg struct {
 	Ver       int    `json:"ver"`  // protocol version
 	Operation int    `json:"op"`   // operation for request
@@ -20,7 +19,6 @@ type PushRoomMsgRequest struct {
 	Msg    Msg
 }
 
-// TODO: 这个不知道是干嘛的
 type PushRoomCountRequest struct {
 	RoomId int
 	Count  int

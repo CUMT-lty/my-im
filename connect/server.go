@@ -11,9 +11,9 @@ import (
 	"time"
 )
 
-// TODO: server 下要分桶，这个分桶机制减少锁竞争还没看明白
+// TODO: server 下要分桶，分桶机制减少锁竞争
 type Server struct {
-	Buckets   []*Bucket     // TODO: [userId:Bucket]，分桶机制没看明白
+	Buckets   []*Bucket     // TODO: [userId:Bucket]，分桶机制
 	Options   ServerOptions // 配置选项
 	bucketIdx uint32        // 这个参数的作用
 	operator  Operator
@@ -46,7 +46,6 @@ func (s *Server) Bucket(userId int) *Bucket {
 	return s.Buckets[idx]
 }
 
-// TODO: 这个方法是干嘛的
 func (s *Server) writePump(ch *Channel, c *Connect) {
 	//PingPeriod default eq 54s
 	// TODO: 发送心跳，保活
@@ -60,13 +59,13 @@ func (s *Server) writePump(ch *Channel, c *Connect) {
 		select {
 		case message, has := <-ch.broadcast:
 			//write data dead time , like http timeout , default 10s
-			ch.conn.SetWriteDeadline(time.Now().Add(s.Options.WriteWait)) // TODO: 没看懂
+			ch.conn.SetWriteDeadline(time.Now().Add(s.Options.WriteWait))
 			if !has {
 				logrus.Warn("SetWriteDeadline not ok")
 				ch.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
-			w, err := ch.conn.NextWriter(websocket.TextMessage) // TODO: 没看懂
+			w, err := ch.conn.NextWriter(websocket.TextMessage) // TODO
 			if err != nil {
 				logrus.Warn(" ch.conn.NextWriter err :%s  ", err.Error())
 				return
@@ -78,9 +77,8 @@ func (s *Server) writePump(ch *Channel, c *Connect) {
 			}
 		case <-ticker.C: // 客户端发来的心跳叫 ping，服务器发送的心跳叫 pong
 			//heartbeat，if ping error will exit and close current websocket conn
-			ch.conn.SetWriteDeadline(time.Now().Add(s.Options.WriteWait)) // TODO: 没看懂
+			ch.conn.SetWriteDeadline(time.Now().Add(s.Options.WriteWait))
 			logrus.Infof("websocket.PingMessage :%v", websocket.PingMessage)
-			// TODO: 这里是不是写错了，服务器发送的心跳应该是 pong
 			if err := ch.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
 			}
@@ -88,7 +86,6 @@ func (s *Server) writePump(ch *Channel, c *Connect) {
 	}
 }
 
-// TODO: 读消息
 func (s *Server) readPump(ch *Channel, c *Connect) {
 	defer func() {
 		logrus.Infof("start exec disConnect ...")
@@ -108,10 +105,11 @@ func (s *Server) readPump(ch *Channel, c *Connect) {
 		ch.conn.Close()
 	}()
 
-	ch.conn.SetReadLimit(s.Options.MaxMessageSize)              // TODO: 看不懂
-	ch.conn.SetReadDeadline(time.Now().Add(s.Options.PongWait)) // TODO: 看不懂
-	ch.conn.SetPongHandler(func(string) error {                 // TODO: 看不懂
-		ch.conn.SetReadDeadline(time.Now().Add(s.Options.PongWait)) // TODO: 看不懂
+	// TODO
+	ch.conn.SetReadLimit(s.Options.MaxMessageSize)
+	ch.conn.SetReadDeadline(time.Now().Add(s.Options.PongWait))
+	ch.conn.SetPongHandler(func(string) error {
+		ch.conn.SetReadDeadline(time.Now().Add(s.Options.PongWait))
 		return nil
 	})
 

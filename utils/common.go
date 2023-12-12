@@ -13,7 +13,7 @@ import (
 const SessionPrefix = "sess_" // session 前缀
 
 // 生成 64 位 随机 id
-func GetSnowflakeId() string { // TODO: 这个随机 id 的各部分如何设置
+func GetSnowflakeId() string {
 	//default node id eq 1,this can modify to different serverId node
 	node, _ := snowflake.NewNode(1)
 	// Generate a snowflake ID.
@@ -35,7 +35,7 @@ func GetNowDateTime() string {
 }
 
 // 获取随机 token
-func GetRandomToken(length int) string { // TODO: 这个还没看懂是什么原理
+func GetRandomToken(length int) string {
 	r := make([]byte, length)
 	io.ReadFull(rand.Reader, r)
 	return base64.URLEncoding.EncodeToString(r)

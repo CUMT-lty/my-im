@@ -23,7 +23,6 @@ func (rpc *RpcLogic) PushRoom(req *proto.Send) (code int, msg string) {
 	return
 }
 
-// TODO: 这个到底是干嘛的
 func (rpc *RpcLogic) Count(req *proto.Send) (code int, msg string) {
 	reply := &proto.SuccessReply{}
 	LogicRpcClient.Call(context.Background(), "Count", req, reply)
@@ -32,7 +31,6 @@ func (rpc *RpcLogic) Count(req *proto.Send) (code int, msg string) {
 	return
 }
 
-// TODO: 这个到底是干嘛的
 func (rpc *RpcLogic) GetRoomInfo(req *proto.Send) (code int, msg string) {
 	reply := &proto.SuccessReply{}
 	LogicRpcClient.Call(context.Background(), "GetRoomInfo", req, reply)

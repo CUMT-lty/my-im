@@ -95,7 +95,7 @@ func (c *Connect) InitConnectWebsocketRpcServer() (err error) {
 // 开启一个 rpc 服务，连接类型是 websocket
 func (c *Connect) createConnectWebsocktsRpcServer(network string, addr string) {
 	s := server.NewServer()
-	addRegistryPlugin(s, network, addr) // TODO: 任何插件都要在服务注册之前就添加进去
+	addRegistryPlugin(s, network, addr) // 任何插件都要在服务注册之前就添加进去
 	//config.Conf.Connect.ConnectTcp.ServerId
 	//s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(ConnectPushRpcServer), fmt.Sprintf("%s", config.Conf.Connect.ConnectWebsocket.ServerId))
 	// metadata 参数中有服务器 serveId 和 连接类型 serverType=ws
@@ -162,7 +162,6 @@ func (rpc *ConnectPushRpcServer) PushRoomMsg(ctx context.Context, pushRoomMsgReq
 	return
 }
 
-// TODO: 没看明白
 func (rpc *ConnectPushRpcServer) PushRoomCount(ctx context.Context, pushRoomMsgReq *proto.PushRoomMsgRequest, successReply *proto.SuccessReply) (err error) {
 	successReply.Code = config.SuccessReplyCode
 	successReply.Msg = config.SuccessReplyMsg
@@ -173,7 +172,6 @@ func (rpc *ConnectPushRpcServer) PushRoomCount(ctx context.Context, pushRoomMsgR
 	return
 }
 
-// TODO: 没看明白
 func (rpc *ConnectPushRpcServer) PushRoomInfo(ctx context.Context, pushRoomMsgReq *proto.PushRoomMsgRequest, successReply *proto.SuccessReply) (err error) {
 	successReply.Code = config.SuccessReplyCode
 	successReply.Msg = config.SuccessReplyMsg

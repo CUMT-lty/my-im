@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-type Connect struct { // TODO: ServerId 用来标识一台服务器？
+type Connect struct { // TODO: ServerId
 	ServerId string
 }
 
@@ -54,7 +54,7 @@ func (c *Connect) Run() {
 		logrus.Panicf("connect --> InitConnectWebsocketRpcServer Fatal error: %s \n", err.Error())
 	}
 	//start Connect layer server handler persistent connection
-	if err := c.InitWebsocket(); err != nil { // TODO: 初始化 websocket，保持连接
+	if err := c.InitWebsocket(); err != nil { // 初始化 websocket，保持连接
 		logrus.Panicf("connect --> Connect layer InitWebsocket() error: %s \n", err.Error())
 	}
 }
