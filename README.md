@@ -1,4 +1,4 @@
-# IM 即时消息通讯后端服务
+# Terminal Chat
 
 纯 Golang 实现的 IM 即时通讯的前后端。后端服务使用分层架构，各层服务单独部署，各层之间基于 Etcd 服务发现，使用 Docker 打包部署上线；前端使用 bubble TUI 库实现了一个轻量、美观的 terminal 应用提供给用户使用。
 
