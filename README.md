@@ -12,16 +12,16 @@
 - Docker 快速部署
 - [bubbletea](https://github.com/charmbracelet/bubbletea) TUI 工具库
 
-## :cherry_blossom: 支持的连接
-- HTTP
-- Websocket
-
 ## :sunflower: 实现的功能
 - 登陆注册、身份验证
 - 聊天室广播消息
 - 房间内成员私信消息
 - 获取房间内在线人数
 - 获取房间内用户的基本信息
+
+## :cherry_blossom: 支持的连接
+- HTTP
+- Websocket
 
 ## :blossom: 希望被关注的项目难点
 1. 不同类型的连接之间的消息互通及消息的可靠推送 —— Redis 作为消息代理处理消息的存储和交付，上层使用 Gin 框架处理请求，消息则投放到消息队列，再由 rpc 广播至最上层连接层，最后由连接层将消息投递到对应的远端用户。
